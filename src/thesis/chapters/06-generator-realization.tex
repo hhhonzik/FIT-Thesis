@@ -1,0 +1,133 @@
+\chapter{Implementace generátoru animace}
+
+Tato kapitola je věnována implementaci generátoru a definovaného formátu animace z~předchozí kapitoly. Jedná se o~konzolovou aplikaci v~programovacím jazyku Python.
+
+\section{Výběr programovacích jazyků}
+
+Generátor bude fungovat jako aplikace běžící v~příkazovém řádku. Aplikace je určena především pro programátory, kteří jsou znalí tohoto prostředí. Pro napsání takové aplikace je možné použít řadu programovácích jazyků, z~nichž se nejvhodněji ukázal jazyk Python\cite{python}.
+
+Python je implementován v~jazyce C\cite{c}. Charakterizuje se rychlostí, jelikož všechny kritické knihovny jsou implementovány právě v~jazyce C a~Python s~nimi velmi dobře komunikuje. Je například 3x - 5x rychlejší než jazyk PHP \cite{phpvspython}. Python není potřeba překládat do binární podoby, interpret spouští rovnou zdrojový kód, což vzhledem k~open-source povaze aplikace není problémem.  Python podporuje třídy, datové formáty a~další programátorské paradigmata objektového programování.
+
+Dalším důvodem výběru tohoto jazyka je možnost použití knihovny Scipy\cite{Scipy}, která obsahuje několik algoritmických postupů, které použijeme při generování animace. 
+
+Pro správný chod generátoru bude potřeba doinstalovat několik knihoven popsaných níže. Postup instalace je popsán v~Instalační příručce \ref{chapter:installation}.
+
+\subsubsection*{Scipy}
+
+Scipy je knihovna plná tříd a~objektů určená pro matematické výpočty, vědu nebo výzkum\cite{Scipy}. Je v~ní obsaženo velké množství funkcí včetně vykreslování grafů. Aplikace bude využívat její algoritmy nad velkým množství dat pro analýzu rozdílu jednotlivých kroků animace (kapitola \ref{section:genimpl})
+
+
+\section{Postup vývoje}
+
+Při vývoji bylo vyzkoušeno několik variant a~bylo nutno vyřešit určité problémy. Je důležité s~zmínit, že vlastní vývoj začal zejména až po definování formátu animace. V~následujícím seznamu je popsán přibližný harmonogram začátku vývoje.
+
+\begin{itemize}
+\item Získání dat z~několika obrázků, které tvoří snímky animace.
+\item Nalezení rozdílů mezi těmito snímky
+\item Export animace do námi vytvořeného formátu
+\item Vytvoření jednoduchého přehrávače, který dokáže animaci přehrát
+\end{itemize}
+
+Po těchto úkonech bylo možné otestovat efektivitu tohoto formátu, z~čehož vznik první příklad popsaný v~sekci \ref{section:example1}. Jelikož byl formát efektivnější, pokračoval jsem v~implementaci dalších požadavků na obě části aplikace.
+
+\subsection{Problémy}
+
+Na úvod jsem se setkal hlavně s~problematickou kompatibilitou mezi verzemi Python 2.x a~3.x. Projekt je psaný v~jazyce Python verze 3.x, pro který není aktualizovaná spousta knihoven. To zpomalilo výběr knihovny pro porovnávání snímků animace.
+
+Zjištění rozdílů mezi snímky a~jejich optimalizace je nakonec řešena díky knihovně Scipy.
+
+\subsubsection*{Kompatibilita}
+
+Vývoj probíhal na několika různých zařízeních. Při tom se objevilo množství problémů při instalaci knihoven, takže byla věnována zvláštní pozornost nastavení prostředí a~co nejjednoduššímu zprovoznění prostředí. 
+
+
+
+\section{Realizace}
+\label{section:genimpl}
+
+Zde je popsaná adresářová struktura, která byla použita při realizaci generátoru. Byla navržena tak, aby vždy jeden soubor obsahoval jednu třídu nebo soubor podobných funkcí.
+
+
+\begin{figure}[h]
+    \dirtree{%
+        .1 main.py\DTcomment{Spustitelný soubor generátoru}.
+        .1 app.
+        .2 controller.py\DTcomment{Třída Controller}.
+        .2 generator.
+        .3 generator.py\DTcomment{Třída Generator}.
+        .2 parsers.
+        .3 Interface.py\DTcomment{Rozhraní Parser}.
+        .3 GifParser.py\DTcomment{Třída GifParser}.
+        .3 VideoParser.py\DTcomment{Třída VideoParser}.
+        .3 ImageParser.py\DTcomment{Třída ImageParser}.
+        .2 export.
+        .3 export.py\DTcomment{Třída Export}.
+        .2 utils.
+        .3 console.py\DTcomment{pomocné funkce pro výpis do konzole}.
+    }
+\end{figure}
+\FloatBarrier
+
+
+V následujících sekcích popíšu vybrané třídy, které mají zajímavou implementaci z pohledu implementace algoritmu zakódování animace.
+
+\subsection{parsers/*}
+
+Třídy dědící rozhraní \textbf{parsers/Interface.py} formátují vstup do námi potřebného formátu.
+
+Pro vygenerování animačního formátu je potřeba definovat akceptované vstupní formáty. Vstup bude rozložen na~sekvenci po sobě jdoucích obrázků, které by vytvořily animaci. Tyto obrázky se budou načítat odlišně pro každý vstup. Tyto jednotlivé možnosti jsou zde rozepsány podle typu vstupu.
+
+Vstupní metody pak načtou data do objektu \textbf{ndimage}, který poskytuje knihovna \textbf{Scipy}. Díky tomu bude možnost na snímcích animace provádět další operace.
+
+\subsubsection*{parsers/ImageParser.py}
+
+V této třídě se tedy pouze načtou obrázky ze složky na vstupu ve formátu \textbf{ndimage}.
+
+Sekvence obrázků je jednoduchým vstupem. Na rozdíl od MP4 videa nebo formátu GIF zde jsou jednotlivé snímky samostatně vytvořené. Vstupem tedy bude složka s~očíslovanými obrázky. Vstupními parametry bude možné zadávat formát obrázku.
+
+\subsubsection*{parsers/VideoParser.py}
+
+Třída má za úkol zprocesovat data z~videa.
+
+MP4 video je formát videa, ze kterého vytvoříme jednotlivé snímky podle zadaných vstupních parametrů - cesty k~videu a~intervalu mezi snímky. Externí knihovna ffmpeg\cite{videolib} pak vybere snímky z~videa podle intervalu. Dané snímky se pak převedou do formátu \textbf{ndimage}.
+
+\subsubsection*{parsers/GifParser.py}
+
+U GIF formátu bude podobný postup jako u~videa. Seznam snímků však vytváří knihovna PIL\cite{PIL} z~každého snímku z~GIF animace. Následné snímky převádí do potřebného formátu \textbf{ndimage}.
+
+\subsection{generator/generator.py}
+
+Pokud vstup proběhl bez problémů, je potřeba implementovat algoritmus pro zakódování animace (kapitola \ref{section:algencode}), čemuž odpovídá třída \textbf{Generator}.
+
+V úvodu se obrázky rozdělí do dvojic - na obrázek první a~ten následující. Pak se pomocí funkce \textbf(find\_objects) najdou rozdíly mezi těmito dvěma obrázky, které jsou reprezentovány pomocí datové struktury \textbf{slice}. Toto pole se pak projde a~rozdíly, které mají k~sobě blízko se snaží sloučit na základě nějaké tolerované vzdálenosti.
+
+Jakmile máme jsou tyto rozdíly hotové, seřadí se podle velikosti a~vytvoří se výsledný obrázek se všemy rozdíly mezi snímky. Tento obrázek a~informace o~snímcích se předají na výstup.
+
+
+\subsection{export/export.py}
+
+Celá animace je tvořena ze dvou souborů. Fragmenty animace se uloží do jednoho obrázku. Nejvhodnější je PNG formát vzhledem k~bezstrátové kompresi. Všechny rozdílné snímky animace jsou umístěné v~jednom obrázku, abychom snížili počet požadavků na~server. 
+
+Druhým souborem jsou informace o~snímcích a~jejich použití. Tento soubor lze zakódovat do PNG obrázku díky jeho kompresi a~následné dekompresi při přehrání. Je ukládán ve formátu JSON. Jedná se o~formát, který slouží zejména pro přenos dat mezi serverem a~webovou aplikací a~tento princip bude používat i~vytvořený přehrávač. 
+
+Výstup se řeší pomocí třídy \textbf{Export}, která nejdříve otestuje, zda je možný zápis do výstupní složky. Po vygenerování animace se pak uloží animace a~přidá se k~nim HTML šablona s~ukázkovým použitím.
+
+\subsubsection*{Komprese výstupu}
+
+Na výstupu se snažíme získat co nejmenší velikost kvůli datovým přenosům. Kompresi provedeme pomocí nástroje pngquant\cite{pngquant}, který optimalizuje barevné spektrum tak, byl výsledný obrázek pro lidské oko nerozeznatelný od původního nekomprimovaného souboru, ale měl přitom mnohem menší počet barev, což u~formátu PNG znamená menší velikost.
+
+Soubor JSON můžeme zminimalizovat tak, že odstraníme přebytečné mezery a~tabulátory a~další nevýznamové znaky.
+
+\section{Testování}
+
+Interpret jazyka Python dokáže spustit i~kód, který například obsahuje přebytečné středníky, které jsem občas v~kódu psal ze zvyku z~jiných programovacích jazyků (C++, PHP). Pro zachování čistoty kódu je proto použit pylint\cite{pylint}, který zkontroluje veškeré nesrovnalosti v~kódu a~popřípadě vypíše chyby.
+
+Jednotlivé části generátoru jsou testovány samostatně. Pro každou tuto část je napsaný jednotkový test, který otestuje její chování.
+
+Testy jsou napsané pomocí frameworku Nose\cite{nose} a~vše je připraveno v~nástroji Make\cite{make}. Testy lze spustit následujícím příkazem.
+
+
+\begin{lstlisting}
+cd ./src/impl/generator/ && make test
+\end{lstlisting}
+

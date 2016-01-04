@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+	<head>
+		<title>01 - Gif - plain algorithm</title>
+		<script type="text/javascript" src="example.timeline.js"></script>
+	</head>
+	<body>
+		<canvas id="canvas" class="anim_target" width="800" height="450">
+		<script>
+			var img = new Image();
+			var _timeline = _timeline.frames;
+			var ctx = document.getElementById("canvas").getContext('2d');
+			img.onload = function()
+			{
+				var i = 0; // aktualni snimek, zaciname na 0
+				var f = function() // funkce vykresli snimek
+				{
+					var frame = i++ % _timeline.length; // cislo snimku
+					var parts = _timeline[frame]; // zmenene casti
+
+					for (var j = 0; j < parts.length; ++j)
+					{
+						var part = parts[j]; // souradnice
+						ctx.drawImage.apply( // vykresli zmenenou cast
+							ctx,
+							[img].concat(part).concat([part[2], part[3]])
+						);
+					}
+					window.setTimeout(f, 500) // opakuj za dalsich 500ms
+				};
+				f(); // spust animaci
+			};
+			img.src = '../packed.png'; // nacist obrazek
+		</script>
+	</body>
+</html>

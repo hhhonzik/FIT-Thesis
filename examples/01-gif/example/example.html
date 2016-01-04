@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+
+<head>
+
+<title>01 - Gif</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="../../../src/impl/player/dist/jquery.html5anim.js"></script>
+<script type="text/javascript" src="example.timeline.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    var element = $("#animation");
+    // inicializace animace
+    element.html5anim({
+      src: '../packed.png',
+      // timeline: '../timeline.json', // this works only on http server
+      timelineData: _timeline,
+      loop: true,
+      speed: 100,
+      onLoad: function () {
+        console.log('Animation loaded');
+      },
+      autoplay: true // zacit prehravat hned po spusteni?
+    });
+    //konec inicializace
+  });
+</script>
+
+<style>
+*{
+  margin: 0;
+  padding: 0;
+  font-family: Arial;
+}
+.half{
+  width: 50%;
+  float: left;
+}
+.content{
+  background: #333;
+  padding: 100px 0;
+  text-align: center;
+}
+.content div{
+  margin: 0 auto;
+  color: #fff;
+}
+.controls{
+  padding: 30px 0;
+  clear: both;
+  text-align: center;
+}
+.controls a{
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 10px;
+  background:  #333;
+  cursor: pointer;
+  color: #fff;
+  text-decoration: none;
+}
+.controls a:hover{
+  color: #aaa;
+}
+</style>
+</head>
+
+<body>
+
+
+<div class="content half">
+  <div id="animation"></div>
+  <div>Converted (3Kb)</div>
+</div>
+<div class="content half">
+  <img src="../../../src/examples/gif/preloader.gif" />
+  <div>Original GIF (24Kb)</div>
+</div>
+<div class="controls half">
+  <a class="button" onclick="$('#animation').html5anim('pause')">Pause</a>
+  <a class="button" onclick="$('#animation').html5anim('play')">Play</a>
+  <a class="button" onclick="$('#animation').html5anim('playTo', 5)">Animate To 5th Frame</a>
+  <a class="button" onclick="$('#animation').html5anim('rewindTo', 0)">Back to first frame</a>
+</div>
+
+</body>

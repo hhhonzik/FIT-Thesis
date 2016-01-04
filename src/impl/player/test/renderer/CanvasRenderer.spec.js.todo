@@ -1,0 +1,5 @@
+var jsdom = require('jsdom');
+
+describe('CanvasRenderer', function(){
+    // there are bugs with <canvas> element and jsdom
+})

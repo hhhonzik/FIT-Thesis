@@ -1,0 +1,42 @@
+\chapter{Instalační příručka}
+\label{chapter:installation}
+
+\section{Generování animace}
+
+Pro generátor je potřeba mít nainstalovaný překladač pro jazyk Python (verze 3). Pokud se bude konvertovat video, je potřeba nainstalovat podpůrnou knihovnu ffmpeg\cite{videolib}. Další požadavky lze nainstalovat pomocí balíčkovacího systému \textbf{pip}\cite{pip}:
+
+\begin{lstlisting}
+make install
+\end{lstlisting}
+
+Pokud uživatel nemá nainstalovaný balíčkovací systém \textbf{pip}, seznam požadavků nalezne v~souboru requirements.txt:
+
+\begin{lstlisting}
+docopt==0.6.1
+scipy
+numpy
+pillow
+av
+\end{lstlisting}
+
+\newpage
+\section{Knihovna pro přehrávání}
+
+Knihovna pro přehrávání je, jak už je napsáno v~požadavcích, založena na technologiích, které poskytne samotný prohlížeč. Na webový prohlížeč jsou tím pádem minimální požadavky. 
+
+\begin{itemize}
+  \item Webový prohlížeč (podporované verze)
+  \begin{itemize}  
+  \item Firefox 4.0+ 
+  \item Opera 6.0+
+  \item Internet Explorer 8.0+
+  \item  Safari 5+
+  \item Google Chrome
+  \end{itemize}
+\end{itemize}
+
+Přehrávání bude probíhat na webové stránce, která se generuje z~HTML kódu, na který jsou požadavky pro načtení souborů v ~následujícím seznamu.
+
+\begin{itemize}
+\item Knihovna jQuery, alespoň verze 1.9 (popř. 2.0+)
+\end{itemize}

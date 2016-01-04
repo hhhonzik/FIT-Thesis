@@ -1,0 +1,132 @@
+% options:
+% thesis=B bachelor's thesis
+% thesis=M master's thesis
+% czech thesis in Czech language
+% slovak thesis in Slovak language
+% english thesis in English language
+% hidelinks remove colour boxes around hyperlinks
+
+\documentclass[thesis=B,czech]{FITthesis}[2012/06/26]
+
+\usepackage[utf8]{inputenc} % LaTeX source encoded as UTF-8
+
+\usepackage{graphicx} %graphics files inclusion
+% \usepackage{amsmath} %advanced maths
+% \usepackage{amssymb} %additional math symbols
+\usepackage{dirtree} %directory tree visualisation
+
+\usepackage{listings}
+\usepackage{placeins}
+
+
+% % list of acronyms
+\usepackage[acronym,nonumberlist,toc,numberedsection=autolabel]{glossaries}
+% \iflanguage{czech}{\renewcommand*{\acronymname}{Seznam pou{\v z}it{\' y}ch zkratek}}{}
+\makeglossaries
+
+\newcommand{\tg}{\mathop{\mathrm{tg}}} %cesky tangens
+\newcommand{\cotg}{\mathop{\mathrm{cotg}}} %cesky cotangens
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% ODTUD DAL VSE ZMENTE
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+\department{Katedra Softwarového Inženýrství}
+\title{Formát a~konverzní nástroje pro video z~webu na mobilních zařízeních}
+\authorGN{Jan} %(křestní) jméno (jména) autora
+\authorFN{Štěpanovský} %příjmení autora
+\authorWithDegrees{Jan Štěpanovský} %jméno autora včetně současných akademických titulů
+\supervisor{Ing. Pavel Štěpán}
+
+\acknowledgements{
+Chtěl bych poděkovat především vedoucímu práce Ing. Pavlovi Štěpánovi za vstřícnost a~důvěru při vytváření tohoto vlastního tématu. Dále bych chtěl poděkovat všem kolegům a~klientům, kteří mi poskytli prostor tento formát vyzkoušet. 
+
+Dále bych chtěl poděkovat svým rodičům, bez kterých bych neměl možnost tuto práci napsat.
+}
+
+\abstractCS{V této práci je zdokumentován postup vytváření animací ve webových prohlížečích v~optimalizovaném formátu. Je zde popsáno vše od výzkumu, až po řešené přiklady použtí a~srovnání s~existujícími postupy. Z~této práce a~jejich výsledků mohou čerpat weboví vývojáři při vytváření animací na svých stránkách. }
+
+\abstractEN{This work captures progress of creating animation in custom format in web interface. It contains everything from research to working examples with comparsion to current solutions. Web developers can use this work and its results as a~resource for creating animations on their web pages.  }
+
+\placeForDeclarationOfAuthenticity{V~Praze}
+\declarationOfAuthenticityOption{4} %volba Prohlášení (číslo 1-6)
+\keywordsCS{javascript, python, html5, canvas, animace, formát}
+\keywordsEN{javascript, python, html5, canvas, animation, format}
+
+\begin{document}
+
+% \newacronym{CVUT}{{\v C}VUT}{{\v C}esk{\' e} vysok{\' e} u{\v c}en{\' i} technick{\' e} v~Praze}
+% \newacronym{FIT}{FIT}{Fakulta informa{\v c}n{\' i}ch technologi{\' i}}
+
+\include{chapters/00-introduction}
+\include{chapters/01-thesis-outcome}
+\include{chapters/02-research}
+\include{chapters/03-analysis}
+\include{chapters/04-format}
+\include{chapters/05-generator-draft}
+\include{chapters/06-generator-realization}
+\include{chapters/07-player-draft}
+\include{chapters/08-player-realization}
+\include{chapters/09-use-cases}
+
+\begin{conclusion}
+
+Nový formát, který vznikl a~je zdokumentován v~této práci, slouží jako kvalitní alternativa formátu GIF. S~kompromisem dokáže nahradit i~HTML5 video na stránkách. 
+
+Z definice algoritmu je zřejmé, že pro ukládání videa nebo animace, kde mezi snímky jsou velké rozdíly, tento formát nepřinese žádné výhody. Naopak výsledná animace by byla pravděpodobně větší. Ovšem například u~zobrazení průchodu aplikací je tento formát užitečný. 
+
+Na práci bylo zajímavé kromě pouze návrhu a~implementace provádět výzkumnou část. Hlavní myšlenka už sice existovala, ale prozkoumat a~navrhnout generátor bylo zajímavé. Formát používám v~soukromých projektech a~v praxi se osvědčil již v~průběhu psaní této práce.
+
+
+\section{Budoucnost}
+
+V budoucnu bych chtěl zpřístupnit tento styl animace komunitě dalších programátorů. Jako další krok bych části této práce přeložil do angličtiny a~uveřejnil. Tím bych chtěl vyvolat nad tímto přístupem diskuzi a~názory jiných vývojářů a~podle toho se ubíral dál.
+
+Z implementace je kandidátem pro změnu generátor animace, kde by bylo možné zoptimalizovat operace při vytváření velké bitmapy. Tyto operace, ač fungují dobře, mají zbytečnou složitost, která by se dala předejít například ukládáním dílčích výsledků. 
+
+
+\end{conclusion}
+
+\bibliographystyle{csn690}
+\bibliography{ref}
+
+\appendix
+
+\chapter{Seznam použitých zkratek}
+% \printglossaries
+\begin{description}
+	\item[JSON] JavaScript Object Notation
+	\item[CSS] Cascading Style Sheets
+	\item[HTML] HyperText Markup Language
+	\item[GIF] The Graphics Interchange Format 
+	\item[PNG] Portable Network Graphics 
+	\item[IE] Internet Explorer
+	\item[MP4] MPEG-4 Part 14
+\end{description}
+
+\chapter{Obsah přiloženého CD}
+
+%upravte podle skutecnosti
+
+\begin{figure}
+	\dirtree{%
+		.1 readme.md\DTcomment{stručný popis obsahu CD}.
+		.1 examples.
+		.2 01-gif\DTcomment{zdrojové kódy k~prvnímu příkladu užití}.
+		.2 01b-gif\DTcomment{zdrojové kódy k~prvnímu příkladu užití}.
+		.2 02-tapdaq\DTcomment{zdrojové kódy k~druhému příkladu užití}.
+		.1 src.
+		.2 impl\DTcomment{zdrojové kódy implementace}.
+		.3 generator\DTcomment{zdrojové kódy generátoru animace}.
+		.3 player\DTcomment{zdrojové kódy přehrávací knihovny}.
+		.2 thesis\DTcomment{zdrojová forma práce ve formátu \LaTeX{}}.
+		.1 text\DTcomment{text práce}.
+		.2 thesis.pdf\DTcomment{text práce ve formátu PDF}.
+		.2 thesis.ps\DTcomment{text práce ve formátu PS}.
+	}
+\end{figure}
+
+\include{extra/C-documentation}
+\include{extra/D-installation}
+
+\end{document}

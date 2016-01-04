@@ -1,0 +1,156 @@
+
+\chapter{Dokumentace použití}
+\label{chapter:documentation}
+
+V této kapitole je popsáno používání tohoto formátu a~to ať už vygenerování aplikace z~různých zdrojů tak přehrávání a~ovládání animace. 
+
+\section{Generování animace}
+
+Animace je generována pomocí Python aplikace, která je popsaná v~páté kapitole. Skript se pouští v~příkazové řádce počítače se vstupními parametry. Skript si sám kontroluje vstup a~poskytne v~případě problémů rychlou nápovědu. V~příkladech je použita cesta z~kořenového adresáře přiloženého CD. 
+
+\begin{lstlisting}
+$./src/impl/generator/main.py
+Usage:
+    main.py [ -v -o PATH -s STEP] images <path>
+    main.py [ -v -o PATH] video <file>
+    main.py [ -v -o PATH] gif <file>
+    main.py (-h | --help)
+\end{lstlisting}
+
+
+Ve výpisu vidíme na prvním řádku chybu, která nastala, dále následuje nápověda, která nám ukazuje možné použití generátoru a~formát jeho vstupu. Pokud se vstup nerozpozná nebo je prázdný, program nahlásí konkrétní chybu a~ukončí se.
+
+
+\subsection{Import videa}
+
+Pokud bychom chtěli importovat video, můžeme použít jednoduchou syntaxi jako v~tomto příkladu: 
+
+
+\begin{lstlisting}
+generator.py video /examples/video/src/video.mp4
+Running video parser.
+Using default delay: 1000ms.
+Found 24 frames, starting conversion.
+Output written in video.mp4/ folder. 
+\end{lstlisting}
+
+Generátor projde aplikací a~úspěšně provede všechny potřebné operace. Import videa navíc dokáže přijmout další parametr, který slouží k~určení délky kroku animace. Pokud není uveden na vstupu, vybere se výchozí hodnota. V~ukázce níže je zobrazen výstup s~vlastní vstupní hodnotou.
+
+\begin{lstlisting}
+generator.py video -s 400 /examples/video/src/video.mp4
+Running video parser.
+Usign animation step: 400ms.
+Found 48 frames, starting conversion.
+Output written in video.mp4/ folder.
+\end{lstlisting}
+
+
+\subsection{Import sekvence obrázků}
+
+Tento import je nejtriviálnějším importem pro generátor, jelikož jeho jediná operace je načtení obrázků a~ošetření, zda všechny obrázky existují a~fungují správně. Jeho příkladné použití je zobrazeno níže.
+
+\begin{lstlisting}
+generator.py images /examples/images/src/
+Running images parser.
+Found 18 frames, starting conversion.
+Output written in /examples/images/src/animation/ folder.
+\end{lstlisting}
+
+\subsection{Import GIF obrázku}
+
+Dále import podporuje animaci z~GIF obrázku. Vstupní obrázek se rozloží na jednotlivé snímky animace a~pustí se algoritmus.
+
+\begin{lstlisting}
+generator.py gif /examples/gif/src/animation.gif
+Running gif parser.
+Found 6 frames, starting conversion.
+Output written in /examples/gif/src/animation/ folder.
+\end{lstlisting}
+
+\section{Použití animace na webové stránce}
+
+Přehrávání animace je popsáno v~jazyce JavaScript. Počítá se, že veškeré instalační podmínky jsou splněny a~tedy je možné používát knihovnu jQuery.
+
+\subsection{Inicializace}
+
+Nejprve je potřeba vložit náš plugin pro přehrávání na stránku. Tento kód vložíme až po inicializaci jQuery.
+
+\begin{lstlisting}
+  <script src="html5anim.min.js" async="true"></script>
+\end{lstlisting}
+
+Na stránce je dále nutné definovat HTML element, ve kterém bude probíhat animace. Stylizace tohoto elementu je mimo obsah této práce a~v~přílohách je použit nestylizovaný HTML tag:
+
+\begin{lstlisting}
+  <div id="animation"></div>
+\end{lstlisting}
+
+Inicializace samotné animace už probíhá v~jQuery jakožto samostatný plugin. Tento plugin se stará o~veškerou funkcionalitu dané aplikace a~dokáže také posílat a~přijímat příkazy pro ovládání.
+
+\begin{lstlisting}
+  $(document).ready(function(){
+    var element = $("#animation");
+    // inicializace animace
+    element.html5anim({
+      src: 'animation/packed.png',
+      timeline: 'animation/timeline.json',
+      loop: false,
+      autoplay: false // zacit prehravat hned po spusteni?
+    });
+    //konec inicializace
+  });
+\end{lstlisting}
+
+Jakmile je animace načtená, je možné ji začít ovládat přes následující příkazy. Počítá se s~provedením inicializace (kódu z~předchozího odstavce).
+
+\begin{lstlisting}
+// spusteni animace (zastavi se u~konce)
+element.html5anim('play');
+
+// zastaveni animace
+element.html5anim('pause');
+
+//prehrani na 43.  krok animace
+element.html5anim('playTo', 43); 
+
+//prehrani zpet na 0. krok animace
+element.html5anim('rewindTo', 0);
+
+\end{lstlisting}
+
+Knihovna dále nabízí možnost informovat uživatele, pokud nastane nějaká událost. Podporují se následující události:
+
+\begin{itemize}
+\item onLoad - po načtení animace 
+\item onPlay - vždy po spuštění animace
+\item onStop - vždy po zastavení animace (i pokud dojede do konce) 
+\item onFrame ( krok animace ) - vždy při přejití na snímek
+
+\end{itemize}
+
+Komunikace může probíhat načtením těchto proměnných při inicializaci nebo později při komunikaci s~knihovnou.
+
+\begin{lstlisting}
+var element = $("#animation");
+// inicializace animace
+element.html5anim({
+  src: 'animation/packed.png',
+  timeline: 'animation/timeline.json',
+  autoplay: false, // zacni prehravat po nacteni
+  onFrame: function(i){
+    //co se stane pri vykresleni i-teho snimku
+    window.console.log( "Prave probiha " + i + " krok animace" );
+  },
+  onStop: function(){
+    //co se stane pri zastaveni
+    window.console.log( "Zastaveni animace" );
+  }
+});
+
+//pridani odposlechu udalosti po inicializaci
+element.html5anim('onPlay', function(){
+  window.console.log("Animace je spustena" );
+});
+
+
+\end{lstlisting}

@@ -1,0 +1,106 @@
+\chapter{Implementace přehrávače animace}
+
+
+\section{Výběr jazyka a~programovacích knihoven}
+
+
+V zadání a~požadavcích bylo stanoveno, že je potřeba dosáhnout použití v~nativních technologiích prohlížečů. Jediný skriptovací jazyk, který splňuje tuto podmínku je Javascript, takže výběr je omezený pouze na něj. Dále jsou použity některé nástroje a~knihovny, které pomáhají s~vývojem a~jsou popsány v~této sekci.
+
+\subsubsection*{jQuery}
+
+Pro Javascript existuje knihovna jQuery. Hlavní výhodou této knihovny je usnadnění práce s~DOM elementy a~jejich vlastnostmi mezi různými prohlížeči. Nemusíme se pak starat o~ošetření, v~jakém prohlížeči se momentálně nacházíme. Celý přehrávač bude implementován jako doplňek do tého knihovny, takže pro použití na stránkách bude potřeba mít tuto knihovnu implementovanou ve stránce. 
+
+\subsubsection*{Grunt.js}
+
+Při vývoji použijeme systém Grunt.js, který se bude starat o~automatizaci často opakovaných úkolů. Zejména se bude starat o~následující úkoly:
+
+
+\begin{itemize}
+  \item Optimalizace kódu Javascript a~vytvoření zmenšeného balíčku určeného k~nasazení 
+  \item Testování aplikace
+  \item Generování api dokumentace z~kódu
+\end{itemize}
+
+Upřesnění a~popis, jak se jednotlivé operace spouští, bude vysvětlen v~uživatelské příručce přehrávače \ref{chapter:documentation}.
+
+\subsubsection*{Browserify}
+
+Browserify je nástroj, pomocí kterého lze vytvořit jeden balíček z~více souborů. Díky tomuto nástroji je možné zdrojový kód přehledně skladovat v~několika souborech a~pomocí nástroje Grunt ho \"kompilovat\" do jednoho balíčku určeného k~použití. 
+
+
+
+\section{Postup vývoje}
+
+Vývoj probíhal ve dvou částech. Jakmile generátor vytvořil první validní výstup, byl vytvořen primitivní skript, který dokázal daný formát přehrát v~rámci webové stránky.
+
+\subsection{Primitivní verze algoritmu}
+
+Zmíněná primitivní verze měla za úkol pouze zobrazit definovaný formát a~zobrazit ho na webové stránce. Pro příklad je zde zobrazena testovací nejprimitivnější verze funkčního přehrávače.
+
+\begin{figure}[h!]
+\caption{Kód jednoduchého algoritmu pro vykreslení}
+\begin{lstlisting}
+<script type="text/javascript" src="anim_metadata.js"></script>
+<canvas id="canvas" width="354" height="354"></canvas>
+<script>
+  var img = new Image();
+  var _timeline = $.getJSON('anim_metadata.json')
+  var ctx = document.getElementById("canvas").getContext('2d');
+  img.onload = function()
+  {
+    var i = 0; // aktualni snimek, zaciname na 0
+    var f = function() // funkce vykresli snimek
+    {
+      var frame = i++ % _timeline.length; // cislo snimku
+      var parts = _timeline[frame].blit; // zmenene casti
+
+      for (var j = 0; j < parts.length; ++j)
+      {
+        var part = parts[j]; // souradnice
+        ctx.drawImage.apply( // vykresli zmenenou cast
+          ctx,
+          [img].concat(part).concat([part[2], part[3]])
+        );
+      }
+      window.setTimeout(f, 500) // opakuj za dalsich 500ms
+    };
+    f(); // spust animaci
+  };
+  img.src = './anim_packed.png'; // nacist obrazek
+</script>
+\end{lstlisting}
+\end{figure}
+\FloatBarrier
+
+V kódu, jak je vidět z~ukázky, se nejprve definuje vykreslující element a~načtou se metadata animace, tedy jeden ze souborů animace. V~Javascriptu se pak definuje, co se má stát při změně snímku, která je pevně definovaná každých 500ms. V~každé změně se změní části z~grafiky podle dat z~načteného souboru metadat. 
+
+
+\subsection{Vývoj plnohodnotné verze}
+
+Jakmile byl generátor animace, který spolupracoval správně s~tímto jednoduchým přehrávačem, hotov, začala práce na plnohodnotném přehrávači podle návrhu aplikace přehrávače definovaného v~kapitole \ref{section:playerdraft}. Nejprve bylo potřeba nastavit vývojové prostředí pomocí aplikace Grunt a~následně se vytvořil funkční přehrávač pro knihovnu jQuery. Implementace tříd a~komunikací mezi nimi proběhla bez větších problémů.
+
+\subsubsection*{Implementace jako jQuery plugin}
+
+Implementace jako jQuery pluginu byla jednoduchá. Kvůli jednoduchosti ovládání byl implementován postup, aby se instance přehrávače ukládala k~objektu. Výhodou tohoto přístupu je to, že si nemusíme ukládat instanci vytvořené animace pro pozdější kontrolu, ale můžeme ji získat opět z~daného objektu jako je ukázáno v~následující ukázce:
+
+\begin{figure}[h]
+\caption{Ukázka použití pluginu, když je uložen u elementu}
+\begin{lstlisting}
+  // v jedne casti aplikace
+  $("#canvas").html5anim({
+    src: 'animation/packed.png',
+    timeline: 'animation/timeline.json'
+  });
+
+  ...
+
+  // v jine casti aplikace
+  $("#canvas").html5anim('pause');
+\end{lstlisting}
+\end{figure}
+
+Celá dokumentace je podrobně popsána v~uživatelské příručce (příloha \ref{chapter:documentation}).
+
+\section{Testování}
+
+Javascriptový kód má kontrolovanou sémantičnost pomocí jslint\cite{jslint} tak, aby byla zajištěna přehlednost a~jednotnost kódu. Dále je otestováno veřejné API rozhraní výsledné animace pomocí nástroje Mocha\cite{mocha}.

@@ -1,0 +1,66 @@
+
+\chapter{Ukázky aplikace}
+
+V této kapitole jsou popsány 3 základní použití aplikace a~zhodnocení se vstupem. 
+
+\section{Příklad: Převod GIF animace}
+\label{section:example1}
+
+V tomto příkladu si ukážeme převod animovaného obrázku ve formátu GIF do námi vytvořeného formátu. Zkusíme porovnat výsledek a~popsat výhody a~nevýhody. 
+
+\subsection{Generování}
+
+Animaci vygenerujeme následujícím příkazem. Vygenerovaný výsledek lze najít na přiloženém CD (/examples/01-gif/)
+
+\begin{lstlisting}
+$ src/impl/generator/main.py gif src/examples/gif/preloader.gif
+Packing rectangles: 35 frames: 10
+Packing finished took: 0.26485490798950195
+Animation generated. Check out output path: ./generated
+\end{lstlisting}
+
+\subsection{Porovnání}
+
+Výstup je vzhledově naprosto identický, změna je ve velikosti  souborů. Vstupní obrázek GIF (24Kb) je zredukovaný o~87.5\% na úctyhodné 3Kb. 
+
+K tomu jako výhodu máme možnost ovládat výstup přes API přehrávače, tedy můžeme animaci zastavit nebo zrychlit. Výstupní formát je mnohem bohatší oproti obrázkům ve formátu GIF, které jsou omezeny na 256 barev, takže výstup je bezztrátový.
+
+\subsection{Zhodnocení výstupu}
+
+Z porovnání vidíme, že náš formát bez ztráty kvality ušetřil dostatek dat a~nám se konverze vyplatí. V~tomto příkladu jsme použili jednoduchou animaci, takže změnšení velikosti je významné. Na jiné a~složitější animaci (/examples/01b-gif) již není zmenšení datové velikosti tak razantní. V~obou případech je výhodou oproti klasickému formátu GIF ovladatelnost v~prohlížeči. 
+
+\newpage
+\section{Tapdaq  - Aktivace SDK}
+
+V tomto případě bychom chtěli představit implementaci služby Tapdaq. Normálně by se daly použít klasické statické obrázky, ale s~tímto formátem můžeme jednotlivé obrázky rozhýbat.
+
+Proto jsme si nahráli rychlý záznam z obrazovky implementace dané knihovny. Výsledný video soubor měl velikost 10.4 MB. 
+
+\subsection{Generování}
+
+Animaci jsme vygenerovali pomocí následujícího příkazu. Přidali jsme parameter v, který přidá více informací na výstup, abychom věděli, zda proces probíhá v~pořádku. Jak je uvedno v~následujícím výpisu, celý zabral necelých šest minut.
+
+\begin{lstlisting}
+$ src/impl/generator/main.py -v video src/examples/video/tapdaq.mov
+Packing rectangles: 683 frames: 23
+...
+Packing finished took: 350.26485490798950195
+Animation generated. Check out output path: ./generated
+\end{lstlisting}
+
+\subsection{Porovnání}
+
+Animační formát jsme generovali z~videa nahraného v~počítači uživatele. Zdrojové video je plynulé a~kvaliní.
+
+Vygenerovaná animace je mnohem více sekaná a~zrychlená. Je to dáno tím, že se bere pouze jeden snímek za sekundu. Námi vytvořená animace má stejnou kvalitu barev. Postrádá oproti videu jen plynulost.
+
+\subsection{Zhodnocení výstupu}
+
+Pokud bychom chtěli plynulé video, náš formát by byl neefektivní. Výsledná velikost je pouze 18\% z~originální velikosti. To je jednoznačně výhoda, ale v~tomto příkladu už vidíme ztrátu kvality. 
+
+Další výhodou vygenerované animace je širší podpora. Zatímco u~zdrojového videa není úplná podpora (tabulka \ref{tab:research-html5}), vygenerovaný formát má podporu kompletní. 
+
+Pokud nám nevadí znatelně menší kvalita videa, vygenerovaný formát nám pak přináší výhodu menší datové náročnosti a~širší podpory.
+
+\newpage
+

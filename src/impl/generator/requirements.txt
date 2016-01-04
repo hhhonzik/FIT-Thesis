@@ -1,0 +1,6 @@
+docopt==0.6.1
+scipy
+numpy
+pillow
+av
+nose

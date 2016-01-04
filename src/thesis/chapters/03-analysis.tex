@@ -1,0 +1,75 @@
+\chapter{Analýza}
+
+
+V této kapitole je provedena analýza požadavků a~podle ní je navržena architektura výsledné aplikace. 
+
+
+\section{Požadavky}
+
+\subsection{Nefunkční požadavky}
+
+Výsledný způsob animace by měl splňovat níže uvedené podmínky.
+
+\subsubsection*{Animace v~prostředí webového prohlížeče}
+
+Důvodem vzniku práce bylo poskytnutí formátu animace ve webovém prostředí, které bude mít díky modernějším technologiím výhodu v~efektivitě a~rychlosti. Je tedy zřejmé, že musíme dodržet základní podmínku a~to podporu ve všech majoritních prohlížečích. Vše by mělo fungovat bez použití doplňků nebo rozšíření v~prohlížečích.
+
+\subsubsection*{Podpora pro mobilní zařízení}
+
+Důvodem tohoto požadavku je fakt, že existující řešení mají velice malou podporu na~mobilních zařízení. Adobe Flash\cite{flash} není podporovaný vůbec, HTML5 Video\cite{html5video} je možné přehrávat pouze v~režimu na celou obrazovku, čímž se animace vytrhne z~kontextu stránky a~zobrazení je tím pádem špatné.
+
+\subsubsection*{Ovládání animace}
+
+Tento požadavek opět souvisí s~tím, že animací chceme stránku ozdobit v~jednom určitém momentu. Je tedy třeba poskytnout vývojářům, kteří by chtěli animovat nějakou část stránky, základní ovládací prvky.
+
+
+\subsubsection*{Snadná integrovatelnost}
+
+Pro vývojáře musí být co nejjednodušší integrace pomocí přidaných skriptů a~návodů. Animace jsou nyní uloženy jako film, tudíž je potřeba vytvořit program, který dokáže z~filmu vytvořit námi požadovaný formát.
+
+Pokud bychom se připravovali na tento formát už od začátku, měli bychom seznam obrázků, kde každý z~nich obsahuje jeden krok animace.
+
+\subsection{Funkční požadavky}
+
+\subsubsection*{Vlastnosti generovacího skriptu}
+
+Animace se bude pouštět pomocí Javascript knihovny, uživatelé stránek budou používat už předem připravenou a~vygenerovanou verzi. Pro vývojáře bude připraven generovací skript do tohoto formátu v~jazyce Python\cite{python}.
+
+\begin{itemize}
+\item Ukládání ve formátu PNG
+\item Vytvoření časové osy každé animace
+\item Možnost vygenerovat animaci ze sekvence snímků
+\item Možnost vygenerovat animaci z~GIF obrázku
+\item Možnost vygenerovat animaci z~videa s~nastavením kvality.
+\end{itemize}
+
+\subsubsection*{Vlastnosti přehrávače}
+
+Tyto vlastnosti bude mít Javascript přehrávač animací
+
+\begin{itemize}
+  \item Možnost spustit animaci v~cyklu stále za sebou
+  \item Možnost spustit animaci do konce nebo nějakého snímku 
+  \item Možnost zvolit rychlost přehrávání
+  \item Možnost skočit v~animaci na určitý snímek
+  
+\end{itemize}
+
+\section{Případy užití}
+
+\subsection{Vytvoření animace}
+
+Programátor by měl mít možnost si vytvořit animaci v~tomto formátu z~dostupných zdrojů. Bude se tedy jednat o~vytvoření animace z~obrázků GIF nebo sekvence obrázků (například dostupných od grafika). Dále bude možnost generovat animaci například z~videa zachycené obrazovky.
+
+\subsection{Přehrávání animace ve webovém prohlížeči}
+
+Animace by měla být přehrávána ve webovém rozhraní na všech důležitých prohlížečích. Musí být zajištěna jednoduchá implementace do webové stránky pro programátora a~snadná ovladatelnost přehrávání. 
+
+
+\section{Architektura projektu}
+
+Řešení tedy rozdělíme do dvou částí. První část bude generovací skript, který animaci připraví ze vstupních formátů, druhá část se pak bude pouštět v webovém prohlížeči uživatelských počítačů. Pro každou část se budou používat trochu jiné technologie, vzhledem k~účelu použití, proto mají dva různé návrhy a~implementace.
+
+
+
+
